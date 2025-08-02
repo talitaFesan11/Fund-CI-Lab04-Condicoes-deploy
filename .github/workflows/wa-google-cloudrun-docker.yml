@@ -1,4 +1,4 @@
-name: GCP Deploy
+name: Local Deploy
 on: push
 jobs:
   lint:
@@ -37,35 +37,23 @@ jobs:
           tags: talitafesan/webacademy:latest
   deploy:
     needs: lint
-    name: Setup Gcloud Account
-    runs-on: ubuntu-latest
-    environment: wagcp_deploy
+    name: Deploy Local Server
+    runs-on: self-hosted
+    environment: local-deploy
     env:
-      IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/webacademy:latest
+      IMAGE_NAME: talitafesan/webacademy:latest
+      APP_PORT: ${{ secrets.APP_PORT }}
+      TS_HOSTNAME: ${{ secrets.TS_HOSTNAME }}
     steps:
-      # Git checkout
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Login to GCP
-      - name: LoginCCP
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Docker Login
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      # gcloud configure docker
-      - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
-
-      # build image
-      - name: Build Docker image
-        run: docker build -t $IMAGE_NAME .
-
-      # push image to registry
-      - name: Push Docker image
-        run: docker push $IMAGE_NAME
-
-      # deploy image
-      - name: Deploy Docker image
-        run: gcloud run deploy wacicd --image $IMAGE_NAME --region us-west1 --memory 128Mi --min-instances 0 --max-instances 1 --platform managed --port 8080 --allow-unauthenticated
+      - name: Pull and Deploy Container
+        run: |
+          echo "Deploying on server $TS_HOSTNAME at port $APP_PORT"
+          docker pull $IMAGE_NAME
+          docker compose down || true
+          docker compose up -d
