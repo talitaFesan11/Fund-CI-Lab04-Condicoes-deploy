@@ -6,6 +6,6 @@ app.get("/", (req, res) => {
   res.send("Bem vindos ao WebAcademy!!");
 });
 
-app.listen(8080, () => {
+app.listen(8080, "0.0.0.0", () => {
   console.log("Rodando na porta 8080");
 });
