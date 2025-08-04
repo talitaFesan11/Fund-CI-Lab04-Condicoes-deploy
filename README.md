@@ -32,6 +32,14 @@ Este projeto utiliza **GitHub Actions** com um **self-hosted runner** para reali
 
 ---
 
+## Usando Tailscale para Acesso Remoto à Aplicação
+🔹 O que é o Tailscale?
+O Tailscale é uma VPN baseada em WireGuard que:
+- ✅ Cria uma rede privada entre seus dispositivos.
+- ✅ Não precisa de configuração complexa de firewall/NAT.
+- ✅ Usa autenticação via SSO (Google, GitHub, Microsoft, etc.).
+- ✅ É gratuita para uso pessoal (até 100 dispositivos).
+
 ### 1. 🔐 Instalar Tailscale no servidor
 
 ```bash
