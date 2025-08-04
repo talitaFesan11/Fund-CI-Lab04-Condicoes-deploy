@@ -1,5 +1,9 @@
 name: Local Deploy
-on: push
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - "**/README.md"
 jobs:
   lint:
     runs-on: ubuntu-latest
